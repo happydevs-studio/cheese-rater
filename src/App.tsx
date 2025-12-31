@@ -3,7 +3,8 @@ import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, User, SignIn, FunnelSimple } from '@phosphor-icons/react'
+import { Input } from '@/components/ui/input'
+import { Plus, User, SignIn, FunnelSimple, MagnifyingGlass, X } from '@phosphor-icons/react'
 import { Cheese, Review, UserProfile, ViewMode, SortOption, FilterState } from '@/lib/types'
 import { CheeseCard } from '@/components/CheeseCard'
 import { CheeseDetail } from '@/components/CheeseDetail'
@@ -11,7 +12,7 @@ import { AddCheeseDialog } from '@/components/AddCheeseDialog'
 import { NicknamePrompt } from '@/components/NicknamePrompt'
 import { FilterPanel } from '@/components/FilterPanel'
 import { EmptyState } from '@/components/EmptyState'
-import { sortCheeses, filterCheeses, getUniqueValues, generateUserId } from '@/lib/cheese-utils'
+import { sortCheeses, filterCheeses, searchCheeses, getUniqueValues, generateUserId } from '@/lib/cheese-utils'
 import { toast } from 'sonner'
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('all')
   const [sortBy, setSortBy] = useState<SortOption>('rating')
   const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [filters, setFilters] = useState<FilterState>({
     origin: [],
     milkType: [],
@@ -72,11 +74,12 @@ function App() {
       result = result.filter(c => profile.wishlist.includes(c.id))
     }
 
+    result = searchCheeses(result, searchQuery)
     result = filterCheeses(result, filters)
     result = sortCheeses(result, allReviews, sortBy)
 
     return result
-  }, [cheeses, reviews, viewMode, sortBy, filters, userProfile])
+  }, [cheeses, reviews, viewMode, sortBy, filters, searchQuery, userProfile])
 
   const availableFilters = useMemo(() => {
     const allCheeses = cheeses || []
@@ -168,6 +171,7 @@ function App() {
   }
 
   const hasActiveFilters = Object.values(filters).some(arr => arr.length > 0)
+  const hasActiveSearch = searchQuery.trim().length > 0
   const allCheeses = cheeses || []
   const allReviews = reviews || []
   const profile = userProfile || { nickname: '', triedCheeses: [], wishlist: [] }
@@ -201,6 +205,32 @@ function App() {
       </header>
 
       <main className="container mx-auto px-6 md:px-12 py-8">
+        <div className="mb-6">
+          <div className="relative">
+            <MagnifyingGlass 
+              size={20} 
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              type="text"
+              placeholder="Search cheeses by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-10"
+            />
+            {hasActiveSearch && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+              >
+                <X size={16} />
+              </Button>
+            )}
+          </div>
+        </div>
+
         <div className="mb-8">
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as ViewMode)}>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -291,9 +321,19 @@ function App() {
               <EmptyState
                 icon="🔍"
                 title="No Matching Cheeses"
-                description="Try adjusting your filters to see more results."
-                actionLabel="Clear Filters"
-                onAction={() => setFilters({ origin: [], milkType: [], texture: [], flavorProfile: [] })}
+                description={
+                  hasActiveSearch 
+                    ? `No cheeses found matching "${searchQuery}". Try a different search term.`
+                    : "Try adjusting your filters to see more results."
+                }
+                actionLabel={hasActiveSearch ? "Clear Search" : "Clear Filters"}
+                onAction={() => {
+                  if (hasActiveSearch) {
+                    setSearchQuery('')
+                  } else {
+                    setFilters({ origin: [], milkType: [], texture: [], flavorProfile: [] })
+                  }
+                }}
               />
             )}
 

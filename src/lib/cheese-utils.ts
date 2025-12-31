@@ -81,6 +81,15 @@ export function getUniqueValues(cheeses: Cheese[], key: keyof Cheese): string[] 
   return Array.from(values).sort()
 }
 
+export function searchCheeses(cheeses: Cheese[], query: string): Cheese[] {
+  if (!query.trim()) return cheeses
+  
+  const lowerQuery = query.toLowerCase().trim()
+  return cheeses.filter(cheese =>
+    cheese.name.toLowerCase().includes(lowerQuery)
+  )
+}
+
 export function generateUserId(): string {
   const stored = localStorage.getItem('cheese-user-id')
   if (stored) return stored

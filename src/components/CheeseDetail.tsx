@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Heart, Plus } from '@phosphor-icons/react'
+import { Heart, Plus, ShoppingCart } from '@phosphor-icons/react'
 import { Cheese, Review } from '@/lib/types'
 import { StarRating, StarDisplay } from './StarRating'
 import { calculateAverageRating, getReviewCount, getUserReview } from '@/lib/cheese-utils'
@@ -147,6 +147,25 @@ export function CheeseDetail({
               <h3 className="font-semibold text-lg mb-2">About this cheese</h3>
               <p className="text-foreground/90 leading-relaxed">{cheese.description}</p>
             </div>
+
+            {cheese.purchaseUrl && (
+              <div>
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full"
+                >
+                  <a
+                    href={cheese.purchaseUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ShoppingCart size={20} />
+                    Buy This Cheese
+                  </a>
+                </Button>
+              </div>
+            )}
 
             <Separator />
 

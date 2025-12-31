@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Heart } from '@phosphor-icons/react'
+import { Heart, ShoppingCart } from '@phosphor-icons/react'
 import { Cheese, Review } from '@/lib/types'
 import { StarDisplay } from './StarRating'
 import { calculateAverageRating, getReviewCount } from '@/lib/cheese-utils'
@@ -75,6 +75,12 @@ export function CheeseCard({ cheese, reviews, isWishlisted, onToggleWishlist, on
             <Badge variant="outline" className="text-xs">
               {cheese.texture}
             </Badge>
+            {cheese.purchaseUrl && (
+              <Badge variant="default" className="text-xs gap-1">
+                <ShoppingCart size={12} />
+                Available
+              </Badge>
+            )}
           </div>
         </div>
       </Card>

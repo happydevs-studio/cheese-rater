@@ -21,6 +21,7 @@ export function AddCheeseDialog({ open, onOpenChange, onSubmit }: AddCheeseDialo
   const [texture, setTexture] = useState('')
   const [description, setDescription] = useState('')
   const [imageUrl, setImageUrl] = useState('')
+  const [purchaseUrl, setPurchaseUrl] = useState('')
   const [flavorInput, setFlavorInput] = useState('')
   const [flavorProfile, setFlavorProfile] = useState<string[]>([])
 
@@ -48,6 +49,7 @@ export function AddCheeseDialog({ open, onOpenChange, onSubmit }: AddCheeseDialo
       flavorProfile,
       description,
       imageUrl: imageUrl || undefined,
+      purchaseUrl: purchaseUrl || undefined,
     })
 
     setName('')
@@ -56,6 +58,7 @@ export function AddCheeseDialog({ open, onOpenChange, onSubmit }: AddCheeseDialo
     setTexture('')
     setDescription('')
     setImageUrl('')
+    setPurchaseUrl('')
     setFlavorProfile([])
     setFlavorInput('')
     onOpenChange(false)
@@ -170,6 +173,17 @@ export function AddCheeseDialog({ open, onOpenChange, onSubmit }: AddCheeseDialo
               placeholder="https://example.com/cheese-image.jpg"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cheese-purchase-url">Where to Buy URL (optional)</Label>
+            <Input
+              id="cheese-purchase-url"
+              type="url"
+              placeholder="https://example.com/buy-cheese"
+              value={purchaseUrl}
+              onChange={(e) => setPurchaseUrl(e.target.value)}
             />
           </div>
 

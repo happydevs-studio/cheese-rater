@@ -7,6 +7,7 @@ export interface Cheese {
   flavorProfile: string[]
   description: string
   imageUrl?: string
+  purchaseUrl?: string
   createdAt: number
 }
 
